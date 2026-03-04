@@ -10,7 +10,8 @@ if (process.env.NODE_ENV === "test") {
 const envSchema = z.object({
 	PORT: z.coerce.number().default(3333),
 	NODE_ENV: z.enum(["test", "development", "production", "staging"]).default("production"),
-	DATABASE_URL: z.string()
+	DATABASE_URL: z.string(),
+	JWT_SECRET: z.string().default("your-secret-key-change-in-production")
 });
 
 const _env = envSchema.safeParse(process.env);
