@@ -18,8 +18,8 @@ const updateMealSchema = z.object({
 });
 
 const filterMealSchema = z.object({
-	field: z.enum(["name", "description", "date", "isOnDiet"]).optional(),
-	value: z.string().optional()
+	// single search parameter that will be matched against multiple fields
+	search: z.string().optional()
 });
 
 export async function createMeal(request: FastifyRequest, reply: FastifyReply) {
@@ -49,8 +49,8 @@ export async function listMeals(request: FastifyRequest, reply: FastifyReply) {
 		const userId = (request.user as any).id;
 		const query = request.query as any;
 
-		if (query.field && query.value) {
-			const meals = await mealsService.filterMeals(userId, query.field, query.value);
+		if (query.search) {
+			const meals = await mealsService.filterMeals(userId, query.search);
 			return reply.send(meals);
 		}
 

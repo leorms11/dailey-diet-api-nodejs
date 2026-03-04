@@ -125,3 +125,20 @@ export async function filterMealsByUserAndField(
 	const meals = await query.orderBy("date", "desc");
 	return meals.map(normalizeMeal);
 }
+
+// new helper that performs a broad search across several fields based on a single string
+export async function filterMealsBySearch(userId: string, search: string): Promise<Meal[]> {
+	let query = knex("meals").where("userId", userId).andWhere(function () {
+		this.where("name", "like", `%${search}%`)
+			.orWhere("description", "like", `%${search}%`)
+			.orWhere("date", "like", `%${search}%`);
+
+		const lowered = search.toLowerCase();
+		if (lowered === "true" || lowered === "false") {
+			this.orWhere("isOnDiet", lowered === "true");
+		}
+	});
+
+	const meals = await query.orderBy("date", "desc");
+	return meals.map(normalizeMeal);
+}

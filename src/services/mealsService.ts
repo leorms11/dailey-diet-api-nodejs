@@ -57,12 +57,9 @@ export async function deleteMeal(mealId: string, userId: string) {
 	return { success: true };
 }
 
-export async function filterMeals(
-	userId: string,
-	field: "name" | "description" | "date" | "isOnDiet",
-	value: any
-) {
-	return mealsRepository.filterMealsByUserAndField(userId, field, value);
+export async function filterMeals(userId: string, search: string) {
+	// simple passthrough to repository search helper
+	return mealsRepository.filterMealsBySearch(userId, search);
 }
 
 export async function getUserMetrics(userId: string) {

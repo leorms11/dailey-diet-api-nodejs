@@ -293,6 +293,56 @@ describe("Daily Diet API", () => {
 			expect(body.length).toBe(2);
 		});
 
+		it("should filter meals with search query across fields", async () => {
+			// prepare a variety of meals
+			await app.inject({
+				method: "POST",
+				url: "/api/meals",
+				headers: { authorization: `Bearer ${token}` },
+				payload: { name: "Salad", description: "Fresh greens", date: "2026-03-05 12:00", isOnDiet: true }
+			});
+
+			await app.inject({
+				method: "POST",
+				url: "/api/meals",
+				headers: { authorization: `Bearer ${token}` },
+				payload: { name: "Burger", description: "Fast food", date: "2026-03-06 13:00", isOnDiet: false }
+			});
+
+			// search by name
+			let res = await app.inject({
+				method: "GET",
+				url: "/api/meals?search=Burger",
+				headers: { authorization: `Bearer ${token}` }
+			});
+			expect(res.statusCode).toBe(200);
+			expect(JSON.parse(res.body)).toHaveLength(1);
+
+			// search by description
+			res = await app.inject({
+				method: "GET",
+				url: "/api/meals?search=greens",
+				headers: { authorization: `Bearer ${token}` }
+			});
+			expect(JSON.parse(res.body)).toHaveLength(1);
+
+			// search by date substring
+			res = await app.inject({
+				method: "GET",
+				url: "/api/meals?search=2026-03-05",
+				headers: { authorization: `Bearer ${token}` }
+			});
+			expect(JSON.parse(res.body)).toHaveLength(1);
+
+			// search by boolean value
+			res = await app.inject({
+				method: "GET",
+				url: "/api/meals?search=false",
+				headers: { authorization: `Bearer ${token}` }
+			});
+			expect(JSON.parse(res.body)).toHaveLength(1);
+		});
+
 		it("should get a specific meal", async () => {
 			const createResponse = await app.inject({
 				method: "POST",
@@ -450,7 +500,7 @@ describe("Daily Diet API", () => {
 			expect(body.totalOffDiet).toBe(1);
 		});
 
-		it("should filter meals by name", async () => {
+		it("should filter meals by name using search query", async () => {
 			await app.inject({
 				method: "POST",
 				url: "/api/meals",
@@ -479,7 +529,7 @@ describe("Daily Diet API", () => {
 
 			const response = await app.inject({
 				method: "GET",
-				url: "/api/meals?field=name&value=Breakfast",
+				url: "/api/meals?search=Breakfast",
 				headers: {
 					authorization: `Bearer ${token}`
 				}
