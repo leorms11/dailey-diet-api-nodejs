@@ -411,4 +411,4 @@ Este projeto foi criado como parte de um desafio de desenvolvimento backend.
 
 ## 👨‍💻 Autor - Leonardo Santos
 
-Desenvolvido como um projeto de aprendizado em Node.js, TypeScript e arquitetura de APIs REST.
+Desenvolvido utilizando github copilot free como um projeto de aprendizado em Node.js, TypeScript e arquitetura de APIs REST.
